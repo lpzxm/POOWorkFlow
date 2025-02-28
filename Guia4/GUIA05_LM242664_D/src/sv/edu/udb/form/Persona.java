@@ -25,26 +25,20 @@ public class Persona extends JFrame {
     private JTextField txtTelefono;
     private JComboBox<String> comboBox1;
     private JTable tblDatos;
-    private JRadioButton rbtOpcion1;
-    private JRadioButton rbtOpcion2;
-    private JRadioButton rbtOpcion3;
-    private JRadioButton rbtOpcion4;
-    private JLabel lblTitulo;
-    private JLabel lblImagen;
     DefaultTableModel modelo;
-    private static final String ARCHIVO_CSV = "datos.csv";
+    private static final String DATOS_CSV = "datos.csv";
 
     public Persona(String title) {
         super(title);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setContentPane(pnlPersona);
-        this.setMinimumSize(new Dimension(600, 500));
+        this.setMinimumSize(new Dimension(900, 700));
         this.setLocationRelativeTo(null);
 
         String[] columns = {"Id", "Nombre", "Edad", "Telefono", "Sexo"};
         modelo = new DefaultTableModel(null, columns);
         tblDatos.setModel(modelo);
-        cargarDatosDesdeCSV();
+        obtenerDatosArchivo();
 
         btnObtenerDatos.addActionListener(new ActionListener() {
             @Override
@@ -66,15 +60,10 @@ public class Persona extends JFrame {
                 tblObtenerDato(e);
             }
         });
-
-        rbtOpcion1.addActionListener(e -> lblImagen.setIcon(new ImageIcon(getClass().getResource("/sv/edu/edu/img/pokemon1.png"))));
-        rbtOpcion2.addActionListener(e -> lblImagen.setIcon(new ImageIcon(getClass().getResource("/sv/edu/edu/img/pokemon2.png"))));
-        rbtOpcion3.addActionListener(e -> lblImagen.setIcon(new ImageIcon(getClass().getResource("/sv/edu/edu/img/pokemon3.png"))));
-        rbtOpcion4.addActionListener(e -> lblImagen.setIcon(new ImageIcon(getClass().getResource("/sv/edu/edu/img/pokemon4.png"))));
     }
 
-    private void cargarDatosDesdeCSV() {
-        try (BufferedReader br = new BufferedReader(new FileReader(ARCHIVO_CSV))) {
+    private void obtenerDatosArchivo() {
+        try (BufferedReader br = new BufferedReader(new FileReader(DATOS_CSV))) {
             String linea;
             while ((linea = br.readLine()) != null) {
                 StringTokenizer st = new StringTokenizer(linea, ",");
@@ -86,14 +75,14 @@ public class Persona extends JFrame {
                 modelo.addRow(new Object[]{id, nombre, edad, telefono, sexo});
             }
         } catch (FileNotFoundException e) {
-            System.out.println("⚠️ Archivo CSV no encontrado. Se creará uno nuevo.");
+            System.out.println("Archivo csv no encontrado, se creara uno nuevo");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void guardarEnCSV(String id, String nombres, String edad, String telefono, String sexo) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(ARCHIVO_CSV, true))) {
+    private void guardarenArchivo(String id, String nombres, String edad, String telefono, String sexo) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(DATOS_CSV, true))) {
             bw.write(id + "," + nombres + "," + edad + "," + telefono + "," + sexo);
             bw.newLine();
         } catch (IOException e) {
@@ -127,7 +116,7 @@ public class Persona extends JFrame {
         Object[] newRow = {id, nombres, edad, telefono, sexo};
         modelo.addRow(newRow);
 
-        guardarEnCSV(id, nombres, edad, telefono, sexo);
+        guardarenArchivo(id, nombres, edad, telefono, sexo);
 
         JOptionPane.showMessageDialog(null, "Datos Guardados:\nID: " + id +
                 "\nNombres: " + nombres + "\nEdad: " + edad + "\nTeléfono: " + telefono + "\nSexo: " + sexo);
